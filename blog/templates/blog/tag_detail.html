@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}#{{ tag.name }} — StitchTales{% endblock %}
+{% block content %}
+<h2 style="color: var(--yarn-brown);">🏷️ #{{ tag.name }}</h2>
+{% for post in posts %}
+<div class="card mb-3 p-4">
+    <h5><a href="{{ post.get_absolute_url }}" class="text-decoration-none text-dark">{{ post.title }}</a></h5>
+    <p class="text-muted">{{ post.excerpt }}</p>
+    <small class="text-muted">{{ post.created_at|date:"M d, Y" }} · {{ post.reading_time }} min read</small>
+</div>
+{% empty %}
+<p class="text-muted">No posts with this tag yet.</p>
+{% endfor %}
+{% endblock %}

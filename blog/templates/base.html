@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}StitchTales{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org@1.9.4"></script>
+    <style>
+        :root {
+            --yarn-pink: #e8a0b4;
+            --yarn-purple: #9b7ec8;
+            --yarn-cream: #fdf6ec;
+            --yarn-brown: #8b5e52;
+        }
+        body { background-color: var(--yarn-cream); font-family: 'Georgia', serif; }
+        .navbar { background: linear-gradient(135deg, var(--yarn-purple), var(--yarn-pink)) !important; }
+        .navbar-brand { font-size: 1.8rem; font-weight: bold; color: white !important; }
+        .btn-primary { background-color: var(--yarn-purple); border-color: var(--yarn-purple); }
+        .btn-primary:hover { background-color: var(--yarn-brown); border-color: var(--yarn-brown); }
+        .card { border: none; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: transform 0.2s; }
+        .card:hover { transform: translateY(-4px); }
+        .badge-category { background-color: var(--yarn-pink); color: white; border-radius: 20px; padding: 4px 12px; font-size: 0.75rem; }
+        .badge-tag { background-color: var(--yarn-purple); color: white; border-radius: 20px; padding: 3px 10px; font-size: 0.72rem; }
+        .reading-time { color: #999; font-size: 0.85rem; }
+        .post-cover { height: 220px; object-fit: cover; border-radius: 16px 16px 0 0; width: 100%; }
+        footer { background: linear-gradient(135deg, var(--yarn-purple), var(--yarn-pink)); color: white; }
+        .like-btn { border: none; background: none; cursor: pointer; font-size: 1.2rem; }
+        .author-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .sidebar-card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'home' %}">🧶 StitchTales</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link text-white" href="{% url 'home' %}">Home</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="{% url 'search' %}">Search</a></li>
+                {% if user.is_authenticated %}
+                <li class="nav-item"><a class="nav-link text-white" href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="{% url 'post_create' %}">✍️ Write</a></li>
+                {% endif %}
+            </ul>
+            <ul class="navbar-nav">
+                {% if user.is_authenticated %}
+                <li class="nav-item"><a class="nav-link text-white" href="{% url 'profile' %}">👤 {{ user.username }}</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="{% url 'logout' %}">Logout</a></li>
+                {% else %}
+                <li class="nav-item"><a class="nav-link text-white" href="{% url 'login' %}">Login</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="{% url 'register' %}">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Messages -->
+<div class="container mt-3">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Main Content -->
+<main class="container my-4">
+    {% block content %}{% endblock %}
+</main>
+
+<!-- Footer -->
+<footer class="py-4 mt-5">
+    <div class="container text-center">
+        <p class="mb-0">🧶 StitchTales — Where every loop tells a story</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

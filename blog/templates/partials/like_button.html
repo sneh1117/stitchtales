@@ -1,0 +1,11 @@
+<button class="like-btn"
+        hx-post="{% url 'like_post' post.slug %}"
+        hx-target="#like-section"
+        hx-swap="innerHTML"
+        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    {% if is_liked %}
+    ❤️ {{ post.likes.count }} Likes
+    {% else %}
+    🤍 {{ post.likes.count }} Likes
+    {% endif %}
+</button>

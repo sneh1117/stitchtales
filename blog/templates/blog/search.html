@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Search — StitchTales{% endblock %}
+{% block content %}
+<h2 style="color: var(--yarn-brown);">🔍 Search</h2>
+<form method="GET" class="mb-4">
+    <div class="input-group">
+        <input type="text" name="q" value="{{ query }}" class="form-control form-control-lg" placeholder="Search patterns, tutorials...">
+        <button class="btn btn-primary" type="submit">Search</button>
+    </div>
+</form>
+{% if query %}
+<p class="text-muted">Results for <strong>"{{ query }}"</strong></p>
+{% for post in posts %}
+<div class="card mb-3 p-4">
+    <h5><a href="{{ post.get_absolute_url }}" class="text-decoration-none text-dark">{{ post.title }}</a></h5>
+    <p class="text-muted">{{ post.excerpt }}</p>
+    <small class="text-muted">{{ post.created_at|date:"M d, Y" }} · {{ post.reading_time }} min read</small>
+</div>
+{% empty %}
+<p class="text-muted">No results found for "{{ query }}" 😔</p>
+{% endfor %}
+{% endif %}
+{% endblock %}

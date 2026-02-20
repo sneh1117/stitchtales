@@ -25,7 +25,7 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display=("user","webiste","created_at")
+    list_display=("user","website","created_at")
 
 
 
