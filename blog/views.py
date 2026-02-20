@@ -161,15 +161,34 @@ def like_post(request, slug):
 
 @login_required
 def dashboard(request):
-    posts = Post.objects.filter(author=request.user)
+    posts = Post.objects.filter(author=request.user).select_related('category').prefetch_related('tags')
+    
+    # Statistics
+    total_posts = posts.count()
+    published_posts = posts.filter(status='published').count()
+    draft_posts = posts.filter(status='draft').count()
     total_views = sum(post.view_count for post in posts)
     total_comments = Comment.objects.filter(post__author=request.user).count()
     total_likes = Like.objects.filter(post__author=request.user).count()
+    
+    # Recent activity
+    recent_comments = Comment.objects.filter(
+        post__author=request.user
+    ).select_related('post', 'author').order_by('-created_at')[:5]
+    
+    # Top performing posts
+    top_posts = posts.filter(status='published').order_by('-view_count')[:5]
+    
     return render(request, 'blog/dashboard.html', {
-        'posts': posts,
+        'posts': posts.order_by('-created_at'),
+        'total_posts': total_posts,
+        'published_posts': published_posts,
+        'draft_posts': draft_posts,
         'total_views': total_views,
         'total_comments': total_comments,
         'total_likes': total_likes,
+        'recent_comments': recent_comments,
+        'top_posts': top_posts,
     })
 
 
