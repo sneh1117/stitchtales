@@ -40,17 +40,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'storages' # used for aws
     'blog',
     'rest_framework',
     'rest_framework.authtoken',
     'django.contrib.sitemaps',
+
    
     
 ]
-#only add cloudinary if credentials are present
-if os.getenv('CLOUDINARY_CLOUD_NAME'):
-    INSTALLED_APPS.insert(5, 'cloudinary_storage')
-    INSTALLED_APPS.insert(6, 'cloudinary')
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -185,22 +184,13 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
 }
 
-#for image uploads testing 
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
 
 
-# Cloudinary for media files (only if credentials exist)
-if os.getenv('CLOUDINARY_CLOUD_NAME'):
-    CLOUDINARY_STORAGE = {
-        'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
-        'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
-        'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
-    }
-    if not DEBUG:
-        DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+# Supabase Storage Configuration
+USE_SUPABASE = config('USE_SUPABASE', default=False, cast=bool)
 
-
-
-
+if USE_SUPABASE:
+    SUPABASE_URL = config('SUPABASE_URL')
+    SUPABASE_KEY = config('SUPABASE_KEY')
+    SUPABASE_BUCKET = config('SUPABASE_BUCKET', default='media')
+    DEFAULT_FILE_STORAGE = 'blog.storage_backends.SupabaseStorage'
