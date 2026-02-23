@@ -188,12 +188,11 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 
-# Cloudinary for media files
-CLOUDINARY_STORAGE = {
-       'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default=''),
-       'API_KEY': config('CLOUDINARY_API_KEY', default=''),
-       'API_SECRET': config('CLOUDINARY_API_SECRET', default=''),
-   }
-   
-if not DEBUG:
-       DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+# Cloudinary for media files (optional - only used if credentials are provided)
+if config('CLOUDINARY_CLOUD_NAME', default='') and not DEBUG:
+    CLOUDINARY_STORAGE = {
+        'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
+        'API_KEY': config('CLOUDINARY_API_KEY'),
+        'API_SECRET': config('CLOUDINARY_API_SECRET'),
+    }
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
