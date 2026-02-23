@@ -44,10 +44,13 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'django.contrib.sitemaps',
-    'cloudinary_storage',
-    'cloudinary',
+   
     
 ]
+#only add cloudinary if credentials are present
+if os.getenv('CLOUDINARY_CLOUD_NAME'):
+    INSTALLED_APPS.insert(5, 'cloudinary_storage')
+    INSTALLED_APPS.insert(6, 'cloudinary')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -188,11 +191,12 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 
-# Cloudinary for media files (optional - only used if credentials are provided)
-if config('CLOUDINARY_CLOUD_NAME', default='') and not DEBUG:
+# Cloudinary for media files (only if credentials exist)
+if os.getenv('CLOUDINARY_CLOUD_NAME'):
     CLOUDINARY_STORAGE = {
-        'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
-        'API_KEY': config('CLOUDINARY_API_KEY'),
-        'API_SECRET': config('CLOUDINARY_API_SECRET'),
+        'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+        'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+        'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
     }
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    if not DEBUG:
+        DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
