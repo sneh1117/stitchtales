@@ -27,4 +27,6 @@ urlpatterns = [
 
     #robots.txt 
     path('robots.txt',views.robots_txt,name="robots_txt"),
+
+    
 ]

@@ -144,6 +144,18 @@ if not DEBUG:
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
 
+# CSRF Settings
+CSRF_TRUSTED_ORIGINS = [
+    'https://stitchtales.up.railway.app',
+    'https://*.railway.app',
+]
+
+# If using environment variable
+if config('CSRF_TRUSTED_ORIGINS', default=''):
+    CSRF_TRUSTED_ORIGINS = [
+        origin.strip() for origin in config('CSRF_TRUSTED_ORIGINS').split(',')
+    ]
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
@@ -167,3 +179,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
 }
+
+#for image uploads testing 
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
