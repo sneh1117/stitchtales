@@ -24,4 +24,7 @@ urlpatterns = [
 
     # Dashboard
     path('dashboard/', views.dashboard, name='dashboard'),
+
+    #robots.txt 
+    path('robots.txt',views.robots_txt,name="robots_txt"),
 ]

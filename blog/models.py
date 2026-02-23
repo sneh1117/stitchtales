@@ -60,6 +60,20 @@ class Post(models.Model):
     updated_at=models.DateTimeField(auto_now=True)
 
 
+    #SEO fields
+    meta_description=models.CharField(
+        max_length=160,
+        blank=True,
+        help_text="SEO meta description (160 chars max)"
+    )
+
+    meta_keywords=models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Comma-separated keywords"
+    )
+
+
     class Meta:
         ordering=["-created_at"]
 

@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from .models import Post, Category, Tag, Comment, Like, UserProfile
 from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm, PostForm, CommentForm
+from django.http import HttpResponse
+from django.views.decorators.http import require_GET
 
 
 # ----------- AUTH VIEWS -----------
@@ -230,3 +232,26 @@ def post_delete(request, slug):
         messages.success(request, 'Post deleted.')
         return redirect('dashboard')
     return render(request, 'blog/post_confirm_delete.html', {'post': post})
+
+#Adding robots.txt views
+
+
+@require_GET
+def robots_txt(request):
+    lines=[
+        "User-Agent:*",
+        "Disallow:/admin/",
+        "Disallow:/dashboard/",
+        "Disallow:/profile/",
+        "Allow:/",
+        "",
+        f"Sitemap:{request.scheme}://{request.get_host()}/sitemap.xml",
+    ]
+    return HttpResponse("\n".join(lines),content_type="text/plain")
+
+def handler404(request,exception):
+    return render(request,"404.html",status=404)
+
+
+def handler500(request):
+    return render(request,"500.html",status=500)
