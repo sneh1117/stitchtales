@@ -194,3 +194,19 @@ if USE_SUPABASE:
     SUPABASE_KEY = config('SUPABASE_KEY')
     SUPABASE_BUCKET = config('SUPABASE_BUCKET', default='media')
     DEFAULT_FILE_STORAGE = 'blog.storage_backends.SupabaseStorage'
+
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+}
