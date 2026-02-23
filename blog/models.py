@@ -4,6 +4,7 @@ from django.utils.text import slugify
 from django.urls import reverse
 import math
 
+
 class Category(models.Model):
     name=models.CharField(max_length=100)
     slug=models.SlugField(unique=True)
@@ -39,6 +40,14 @@ class Tag(models.Model):
     def get_absolute_url(self):
         return reverse("tag_detail", kwargs={"slug": self.slug})
 
+# Add this import
+def get_supabase_storage():
+    from django.conf import settings
+    if getattr(settings, 'USE_SUPABASE', False):
+        from blog.storage_backends import SupabaseStorage
+        return SupabaseStorage()
+    return None
+
 class Post(models.Model):
     STATUS_CHOICES=(
         ("draft","Draft"),
@@ -50,7 +59,12 @@ class Post(models.Model):
     author=models.ForeignKey(User,on_delete=models.CASCADE,related_name="posts")
     category =models.ForeignKey(Category,on_delete=models.SET_NULL,null=True,related_name="posts")
     tags=models.ManyToManyField(Tag,related_name="posts",blank=True)
-    cover_image=models.ImageField(upload_to="covers/",blank=True,null=True)
+    cover_image = models.ImageField(
+        upload_to="covers/",
+        blank=True,
+        null=True,
+        storage=get_supabase_storage  # ✅ explicitly use Supabase
+    )
     content=models.TextField()
     excerpt=models.TextField(max_length=300,blank=True)
     status=models.CharField(max_length=10,choices=STATUS_CHOICES,default="draft")
@@ -101,7 +115,12 @@ class Post(models.Model):
 class UserProfile(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE,related_name="profile")
     bio=models.TextField(max_length=500,blank=True)
-    avatar=models.ImageField(upload_to="avatars/",blank=True,null=True)
+    avatar = models.ImageField(
+        upload_to="avatars/",
+        blank=True,
+        null=True,
+        storage=get_supabase_storage  # ✅ explicitly use Supabase
+    )
     website=models.URLField(blank=True)
     instagram=models.CharField(max_length=100,blank=True)
     pinterest=models.CharField(max_length=100,blank=True)
