@@ -271,3 +271,44 @@ def test_cloudinary(request):
         'debug': settings.DEBUG,
     }
     return JsonResponse(cloudinary_status)
+
+from django.utils import timezone
+
+@login_required
+def test_upload(request):
+    if request.method == 'POST' and request.FILES.get('test_image'):
+        try:
+            from .models import Post
+            test_post = Post(
+                title="Test Upload " + str(timezone.now()),
+                content="Testing cloudinary upload",
+                author=request.user,
+                slug="test-upload-" + str(timezone.now().timestamp()),
+                cover_image=request.FILES['test_image']
+            )
+            test_post.save()
+            
+            return JsonResponse({
+                'success': True,
+                'image_url': test_post.cover_image.url if test_post.cover_image else 'NO URL',
+                'image_name': str(test_post.cover_image.name) if test_post.cover_image else 'NO NAME',
+                'storage_backend': settings.DEFAULT_FILE_STORAGE if hasattr(settings, 'DEFAULT_FILE_STORAGE') else 'NOT SET'
+            })
+        except Exception as e:
+            import traceback
+            return JsonResponse({
+                'success': False,
+                'error': str(e),
+                'traceback': traceback.format_exc()
+            })
+    
+    from django.middleware.csrf import get_token
+    csrf_token = get_token(request)
+    html = f'''
+    <form method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="csrfmiddlewaretoken" value="{csrf_token}">
+        <input type="file" name="test_image" accept="image/*" required>
+        <button type="submit">Test Upload to Cloudinary</button>
+    </form>
+    '''
+    return HttpResponse(html)
