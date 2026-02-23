@@ -255,3 +255,19 @@ def handler404(request,exception):
 
 def handler500(request):
     return render(request,"500.html",status=500)
+
+
+from django.http import JsonResponse
+import os
+from django.conf import settings
+
+def test_cloudinary(request):
+    cloudinary_status = {
+        'cloud_name': os.getenv('CLOUDINARY_CLOUD_NAME', 'NOT SET'),
+        'api_key_set': 'YES' if os.getenv('CLOUDINARY_API_KEY') else 'NO',
+        'api_secret_set': 'YES' if os.getenv('CLOUDINARY_API_SECRET') else 'NO',
+        'cloudinary_in_apps': 'cloudinary' in settings.INSTALLED_APPS,
+        'storage_backend': getattr(settings, 'DEFAULT_FILE_STORAGE', 'NOT SET'),
+        'debug': settings.DEBUG,
+    }
+    return JsonResponse(cloudinary_status)

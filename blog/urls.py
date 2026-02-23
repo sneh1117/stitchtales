@@ -28,5 +28,5 @@ urlpatterns = [
     #robots.txt 
     path('robots.txt',views.robots_txt,name="robots_txt"),
 
-    
+    path('test-cloudinary/', views.test_cloudinary, name='test_cloudinary'),
 ]
