@@ -133,14 +133,16 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'  # For production
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
-#Security settings for production
+# Security settings for production
 if not DEBUG:
-    SECURE_SSL_REDIRECT=True
-    SESSION_COOKIE_SECURE=True
-    CSRF_COOKIE_SECURE=True
-    SECURE_BROWSER_XSS_FILTER=True
-    SECURE_CONTENT_TYPE_NOSNIFF=True
-    X_FRAME_OPTIONS='DENY'
+    # Only redirect if not on Railway (Railway handles SSL)
+    if 'railway.app' not in config('ALLOWED_HOSTS', default=''):
+        SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
