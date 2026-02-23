@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'django.contrib.sitemaps',
+    'cloudinary_storage',
+    'cloudinary',
     
 ]
 
@@ -125,7 +127,7 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'  # For production
 # STATICFILES_DIRS = [BASE_DIR / 'static']  # For development
 #for railway 
@@ -184,3 +186,14 @@ REST_FRAMEWORK = {
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
+# Cloudinary for media files
+CLOUDINARY_STORAGE = {
+       'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default=''),
+       'API_KEY': config('CLOUDINARY_API_KEY', default=''),
+       'API_SECRET': config('CLOUDINARY_API_SECRET', default=''),
+   }
+   
+if not DEBUG:
+       DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
