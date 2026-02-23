@@ -28,6 +28,6 @@ urlpatterns = [
     #robots.txt 
     path('robots.txt',views.robots_txt,name="robots_txt"),
 
-    path('test-cloudinary/', views.test_cloudinary, name='test_cloudinary'),
-    path('test-upload/', views.test_upload, name='test_upload'),
+    
+    path('debug-storage/', views.debug_storage, name='debug_storage'),
 ]

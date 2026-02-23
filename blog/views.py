@@ -322,3 +322,14 @@ def test_upload(request):
     </html>
     '''
     return HttpResponse(html)
+
+def debug_storage(request):
+    from django.conf import settings
+    return JsonResponse({
+        'USE_SUPABASE': getattr(settings, 'USE_SUPABASE', 'NOT SET'),
+        'DEFAULT_FILE_STORAGE': getattr(settings, 'DEFAULT_FILE_STORAGE', 'NOT SET'),
+        'SUPABASE_URL': getattr(settings, 'SUPABASE_URL', 'NOT SET'),
+        'SUPABASE_BUCKET': getattr(settings, 'SUPABASE_BUCKET', 'NOT SET'),
+    })
+
+
