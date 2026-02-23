@@ -282,7 +282,6 @@ from django.utils import timezone
 def test_upload(request):
     if request.method == 'POST' and request.FILES.get('test_image'):
         try:
-            from .models import Post
             test_post = Post(
                 title="Test Upload " + str(timezone.now()),
                 content="Testing cloudinary upload",
@@ -296,9 +295,10 @@ def test_upload(request):
                 'success': True,
                 'image_url': test_post.cover_image.url if test_post.cover_image else 'NO URL',
                 'image_name': str(test_post.cover_image.name) if test_post.cover_image else 'NO NAME',
-                'storage_backend': settings.DEFAULT_FILE_STORAGE if hasattr(settings, 'DEFAULT_FILE_STORAGE') else 'NOT SET'
+                'storage_backend': getattr(settings, 'DEFAULT_FILE_STORAGE', 'NOT SET')
             })
         except Exception as e:
+            import traceback
             return JsonResponse({
                 'success': False,
                 'error': str(e),
@@ -311,12 +311,12 @@ def test_upload(request):
     <!DOCTYPE html>
     <html>
     <head><title>Test Upload</title></head>
-    <body>
+    <body style="padding: 20px; font-family: Arial;">
         <h1>Test Cloudinary Upload</h1>
         <form method="POST" enctype="multipart/form-data">
             <input type="hidden" name="csrfmiddlewaretoken" value="{csrf_token}">
-            <input type="file" name="test_image" accept="image/*" required>
-            <button type="submit">Test Upload to Cloudinary</button>
+            <p><input type="file" name="test_image" accept="image/*" required></p>
+            <button type="submit" style="padding: 10px 20px; background: #9b7ec8; color: white; border: none; cursor: pointer;">Test Upload</button>
         </form>
     </body>
     </html>
