@@ -7,6 +7,10 @@ from .models import Post, Category, Tag, Comment, Like, UserProfile
 from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm, PostForm, CommentForm
 from django.http import HttpResponse
 from django.views.decorators.http import require_GET
+from django.http import HttpResponse, JsonResponse
+from django.utils import timezone
+from django.conf import settings
+import traceback
 
 
 # ----------- AUTH VIEWS -----------
@@ -295,7 +299,6 @@ def test_upload(request):
                 'storage_backend': settings.DEFAULT_FILE_STORAGE if hasattr(settings, 'DEFAULT_FILE_STORAGE') else 'NOT SET'
             })
         except Exception as e:
-            import traceback
             return JsonResponse({
                 'success': False,
                 'error': str(e),
@@ -305,10 +308,17 @@ def test_upload(request):
     from django.middleware.csrf import get_token
     csrf_token = get_token(request)
     html = f'''
-    <form method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="csrfmiddlewaretoken" value="{csrf_token}">
-        <input type="file" name="test_image" accept="image/*" required>
-        <button type="submit">Test Upload to Cloudinary</button>
-    </form>
+    <!DOCTYPE html>
+    <html>
+    <head><title>Test Upload</title></head>
+    <body>
+        <h1>Test Cloudinary Upload</h1>
+        <form method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="csrfmiddlewaretoken" value="{csrf_token}">
+            <input type="file" name="test_image" accept="image/*" required>
+            <button type="submit">Test Upload to Cloudinary</button>
+        </form>
+    </body>
+    </html>
     '''
     return HttpResponse(html)
