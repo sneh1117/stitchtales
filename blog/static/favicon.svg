@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Background with gradient -->
+  <defs>
+    <radialGradient id="bg" cx="40%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#b99fd8"/>
+      <stop offset="100%" stop-color="#7c5cbf"/>
+    </radialGradient>
+    <radialGradient id="yarn" cx="40%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#f7c5d5"/>
+      <stop offset="100%" stop-color="#e8809a"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="50" cy="50" r="50" fill="url(#bg)"/>
+
+  <!-- Yarn ball base -->
+  <circle cx="38" cy="56" r="24" fill="url(#yarn)"/>
+
+  <!-- Yarn lines across ball -->
+  <path d="M16 48 Q38 38 60 52" stroke="white" stroke-width="2" fill="none" opacity="0.5" stroke-linecap="round"/>
+  <path d="M14 56 Q38 44 62 58" stroke="white" stroke-width="2" fill="none" opacity="0.5" stroke-linecap="round"/>
+  <path d="M16 64 Q38 52 60 64" stroke="white" stroke-width="2" fill="none" opacity="0.5" stroke-linecap="round"/>
+  <path d="M22 72 Q38 62 56 70" stroke="white" stroke-width="2" fill="none" opacity="0.4" stroke-linecap="round"/>
+  <path d="M26 40 Q38 68 44 78" stroke="white" stroke-width="2" fill="none" opacity="0.4" stroke-linecap="round"/>
+  <path d="M38 32 Q44 56 40 80" stroke="white" stroke-width="2" fill="none" opacity="0.4" stroke-linecap="round"/>
+  <path d="M50 34 Q52 58 46 78" stroke="white" stroke-width="2" fill="none" opacity="0.3" stroke-linecap="round"/>
+
+  <!-- Yarn thread going up to hook -->
+  <path d="M57 42 Q65 30 68 22" stroke="#f7c5d5" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+  <!-- Crochet hook -->
+  <rect x="64" y="12" width="8" height="38" rx="4" fill="white"/>
+  <!-- Hook curve -->
+  <path d="M64 48 Q54 50 54 58 Q54 67 63 67 Q70 67 72 60" stroke="white" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Hook shine -->
+  <rect x="66" y="14" width="2.5" height="20" rx="1.25" fill="#e0d0f0" opacity="0.6"/>
+</svg>
