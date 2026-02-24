@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.utils.text import slugify
 from django.urls import reverse
 import math
+from blog.storage_backends import SupabaseStorage
 
 
 class Category(models.Model):
@@ -40,13 +41,7 @@ class Tag(models.Model):
     def get_absolute_url(self):
         return reverse("tag_detail", kwargs={"slug": self.slug})
 
-# Add this import
-def get_supabase_storage():
-    from django.conf import settings
-    if getattr(settings, 'USE_SUPABASE', False):
-        from blog.storage_backends import SupabaseStorage
-        return SupabaseStorage()
-    return None
+supabase_storage = SupabaseStorage()
 
 class Post(models.Model):
     STATUS_CHOICES=(
@@ -63,6 +58,7 @@ class Post(models.Model):
         upload_to="covers/",
         blank=True,
         null=True,
+        storage=supabase_storage
         
     )
     content=models.TextField()
@@ -119,6 +115,7 @@ class UserProfile(models.Model):
         upload_to="avatars/",
         blank=True,
         null=True,
+        storage=supabase_storage
             )
     website=models.URLField(blank=True)
     instagram=models.CharField(max_length=100,blank=True)
