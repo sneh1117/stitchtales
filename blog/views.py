@@ -261,76 +261,11 @@ def handler500(request):
     return render(request,"500.html",status=500)
 
 
-from django.http import JsonResponse
-import os
-from django.conf import settings
 
-def test_cloudinary(request):
-    cloudinary_status = {
-        'cloud_name': os.getenv('CLOUDINARY_CLOUD_NAME', 'NOT SET'),
-        'api_key_set': 'YES' if os.getenv('CLOUDINARY_API_KEY') else 'NO',
-        'api_secret_set': 'YES' if os.getenv('CLOUDINARY_API_SECRET') else 'NO',
-        'cloudinary_in_apps': 'cloudinary' in settings.INSTALLED_APPS,
-        'storage_backend': getattr(settings, 'DEFAULT_FILE_STORAGE', 'NOT SET'),
-        'debug': settings.DEBUG,
-    }
-    return JsonResponse(cloudinary_status)
 
-from django.utils import timezone
 
-@login_required
-def test_upload(request):
-    if request.method == 'POST' and request.FILES.get('test_image'):
-        try:
-            test_post = Post(
-                title="Test Upload " + str(timezone.now()),
-                content="Testing cloudinary upload",
-                author=request.user,
-                slug="test-upload-" + str(timezone.now().timestamp()),
-                cover_image=request.FILES['test_image']
-            )
-            test_post.save()
-            
-            return JsonResponse({
-                'success': True,
-                'image_url': test_post.cover_image.url if test_post.cover_image else 'NO URL',
-                'image_name': str(test_post.cover_image.name) if test_post.cover_image else 'NO NAME',
-                'storage_backend': getattr(settings, 'DEFAULT_FILE_STORAGE', 'NOT SET')
-            })
-        except Exception as e:
-            import traceback
-            return JsonResponse({
-                'success': False,
-                'error': str(e),
-                'traceback': traceback.format_exc()
-            })
-    
-    from django.middleware.csrf import get_token
-    csrf_token = get_token(request)
-    html = f'''
-    <!DOCTYPE html>
-    <html>
-    <head><title>Test Upload</title></head>
-    <body style="padding: 20px; font-family: Arial;">
-        <h1>Test Cloudinary Upload</h1>
-        <form method="POST" enctype="multipart/form-data">
-            <input type="hidden" name="csrfmiddlewaretoken" value="{csrf_token}">
-            <p><input type="file" name="test_image" accept="image/*" required></p>
-            <button type="submit" style="padding: 10px 20px; background: #9b7ec8; color: white; border: none; cursor: pointer;">Test Upload</button>
-        </form>
-    </body>
-    </html>
-    '''
-    return HttpResponse(html)
 
-def debug_storage(request):
-    from django.conf import settings
-    return JsonResponse({
-        'USE_SUPABASE': getattr(settings, 'USE_SUPABASE', 'NOT SET'),
-        'DEFAULT_FILE_STORAGE': getattr(settings, 'DEFAULT_FILE_STORAGE', 'NOT SET'),
-        'SUPABASE_URL': getattr(settings, 'SUPABASE_URL', 'NOT SET'),
-        'SUPABASE_BUCKET': getattr(settings, 'SUPABASE_BUCKET', 'NOT SET'),
-    })
+
 
 
 

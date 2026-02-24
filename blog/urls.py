@@ -29,7 +29,7 @@ urlpatterns = [
     path('robots.txt',views.robots_txt,name="robots_txt"),
 
     
-    path('debug-storage/', views.debug_storage, name='debug_storage'),
+    
 
    
 ]
