@@ -7,7 +7,7 @@ import math
 
 class Category(models.Model):
     name=models.CharField(max_length=100)
-    slug=models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, blank=True, max_length=255)
     description=models.TextField(blank=True)
     created_at=models.DateTimeField(auto_now_add=True)
     
@@ -27,7 +27,7 @@ class Category(models.Model):
 
 class Tag(models.Model):
     name=models.CharField(max_length=100)
-    slug=models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, blank=True, max_length=255)
 
     def __str__(self):
         return self.name
@@ -55,7 +55,7 @@ class Post(models.Model):
     )
 
     title=models.CharField(max_length=200)
-    slug=models.SlugField(unique=True,blank=True)
+    slug = models.SlugField(unique=True, blank=True, max_length=255)
     author=models.ForeignKey(User,on_delete=models.CASCADE,related_name="posts")
     category =models.ForeignKey(Category,on_delete=models.SET_NULL,null=True,related_name="posts")
     tags=models.ManyToManyField(Tag,related_name="posts",blank=True)
