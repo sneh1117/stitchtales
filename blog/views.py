@@ -333,3 +333,11 @@ def debug_storage(request):
     })
 
 
+def create_superuser(request):
+    from django.contrib.auth.models import User
+    if not User.objects.filter(username='meera7').exists():
+        User.objects.create_superuser('meera7', 'meeranaik7@gmail.com', 'GrazzieMille25*')
+        return HttpResponse("Superuser created! Username: meera7, Password: GrazzieMille25*")
+    return HttpResponse("Superuser already exists!")
+
+
