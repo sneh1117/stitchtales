@@ -63,7 +63,7 @@ class Post(models.Model):
         upload_to="covers/",
         blank=True,
         null=True,
-        storage=get_supabase_storage  # ✅ explicitly use Supabase
+        
     )
     content=models.TextField()
     excerpt=models.TextField(max_length=300,blank=True)
@@ -119,8 +119,7 @@ class UserProfile(models.Model):
         upload_to="avatars/",
         blank=True,
         null=True,
-        storage=get_supabase_storage  # ✅ explicitly use Supabase
-    )
+            )
     website=models.URLField(blank=True)
     instagram=models.CharField(max_length=100,blank=True)
     pinterest=models.CharField(max_length=100,blank=True)
