@@ -31,5 +31,5 @@ urlpatterns = [
     
     path('debug-storage/', views.debug_storage, name='debug_storage'),
 
-    path('create-superuser/', views.create_superuser),
+   
 ]
