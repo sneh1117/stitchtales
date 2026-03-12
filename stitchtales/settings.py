@@ -224,7 +224,10 @@ SOCIALACCOUNT_PROVIDERS = {
             'secret': config('GOOGLE_CLIENT_SECRET'),
         },
         'SCOPE': ['profile', 'email'],
-        'AUTH_PARAMS': {'access_type': 'online'},
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+            'prompt': 'select_account'  # ← ADD THIS
+        },
         'FETCH_USERINFO': True,
     }
 }
