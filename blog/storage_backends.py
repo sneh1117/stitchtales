@@ -8,9 +8,10 @@ logger = logging.getLogger(__name__)
 
 class SupabaseStorage(Storage):
     def __init__(self):
+        if not getattr(settings, 'USE_SUPABASE', False):
+            return
         self.client = create_client(settings.SUPABASE_URL, settings.SUPABASE_KEY)
         self.bucket = settings.SUPABASE_BUCKET
-    
     def _save(self, name, content):
         logger.warning(f"[Supabase] _save called with name={name}")
         # Keep the folder structure (e.g., covers/ or avatars/)

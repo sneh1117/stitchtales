@@ -41,7 +41,8 @@ class Tag(models.Model):
     def get_absolute_url(self):
         return reverse("tag_detail", kwargs={"slug": self.slug})
 
-supabase_storage = SupabaseStorage()
+from django.conf import settings as django_settings
+supabase_storage = SupabaseStorage() if django_settings.USE_SUPABASE else None
 
 class Post(models.Model):
     STATUS_CHOICES=(
@@ -55,12 +56,11 @@ class Post(models.Model):
     category =models.ForeignKey(Category,on_delete=models.SET_NULL,null=True,related_name="posts")
     tags=models.ManyToManyField(Tag,related_name="posts",blank=True)
     cover_image = models.ImageField(
-        upload_to="covers/",
-        blank=True,
-        null=True,
-        storage=supabase_storage
-        
-    )
+    upload_to='covers/',
+    blank=True,
+    null=True,
+    storage=supabase_storage,
+)
     content=models.TextField()
     excerpt=models.TextField(max_length=300,blank=True)
     status=models.CharField(max_length=10,choices=STATUS_CHOICES,default="draft")
@@ -112,11 +112,11 @@ class UserProfile(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE,related_name="profile")
     bio=models.TextField(max_length=500,blank=True)
     avatar = models.ImageField(
-        upload_to="avatars/",
-        blank=True,
-        null=True,
-        storage=supabase_storage
-            )
+    upload_to='avatars/',
+    blank=True,
+    null=True,
+    storage=supabase_storage,
+)
     website=models.URLField(blank=True)
     instagram=models.CharField(max_length=100,blank=True)
     pinterest=models.CharField(max_length=100,blank=True)
