@@ -1,5 +1,12 @@
 # StitchTales 🧶
 
+![CI](https://github.com/sneh1117/stitchtales/actions/workflows/ci.yml/badge.svg)
+![Python](https://img.shields.io/badge/Python-3.10-blue?logo=python)
+![Django](https://img.shields.io/badge/Django-5.2-green?logo=django)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Railway-blue?logo=postgresql)
+![Deployed](https://img.shields.io/badge/Deployed-Railway-blueviolet?logo=railway)
+![License](https://img.shields.io/badge/License-MIT-yellow)
+
 A full-featured blogging platform built for the crochet and knitting community. StitchTales allows creators to share tutorials, patterns, and stories — with a clean writing experience, image uploads via Supabase, and a REST API for extensibility.
 
 **Live:** [stitchtales.up.railway.app](https://stitchtales.up.railway.app)
