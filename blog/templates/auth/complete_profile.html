@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+{% block title %}Complete Your Profile — StitchTales{% endblock %}
+
+{% block extra_head %}
+<style>
+  .auth-card {
+    max-width: 480px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 8px 40px rgba(155, 126, 200, 0.15);
+  }
+  .auth-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--yarn-brown);
+    text-align: center;
+    margin-bottom: 0.25rem;
+  }
+  .auth-subtitle {
+    text-align: center;
+    color: #aaa;
+    font-size: 0.9rem;
+    margin-bottom: 1.75rem;
+  }
+  .avatar-upload-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+  .avatar-preview {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--yarn-purple);
+    background: #f5f0ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    overflow: hidden;
+  }
+  .avatar-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+  }
+  .avatar-label {
+    font-size: 0.82rem;
+    color: var(--yarn-purple);
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  #id_avatar { display: none; }
+  .form-control {
+    border-radius: 10px;
+    border: 1.5px solid #eee;
+    padding: 0.65rem 1rem;
+    font-family: 'Georgia', serif;
+    transition: border-color 0.2s;
+  }
+  .form-control:focus {
+    border-color: var(--yarn-purple);
+    box-shadow: 0 0 0 3px rgba(155, 126, 200, 0.1);
+  }
+  .form-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #666;
+    margin-bottom: 0.35rem;
+  }
+  .btn-save {
+    background: linear-gradient(135deg, var(--yarn-purple), var(--yarn-pink));
+    border: none;
+    border-radius: 12px;
+    padding: 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: 'Georgia', serif;
+    color: white;
+    width: 100%;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .btn-save:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    color: white;
+  }
+  .skip-link {
+    display: block;
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: #bbb;
+    text-decoration: none;
+  }
+  .skip-link:hover { color: #999; }
+  .google-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: #aaa;
+    margin-bottom: 1.5rem;
+  }
+  .google-badge img { width: 16px; height: 16px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+  <div class="col-12">
+    <div class="auth-card">
+
+      <h2 class="auth-title">✨ One Last Step</h2>
+      <p class="auth-subtitle">Set up your StitchTales profile</p>
+
+      <div class="google-badge">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+        Signed in via Google as {{ request.user.email }}
+      </div>
+
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Avatar Upload -->
+        <div class="avatar-upload-area">
+          <div class="avatar-preview" id="avatarPreview">
+            🧶
+            <img id="avatarImg" src="" alt="Preview">
+          </div>
+          <label for="id_avatar" class="avatar-label">Upload profile photo</label>
+          <input type="file" name="avatar" id="id_avatar" accept="image/*">
+        </div>
+
+        <!-- Username -->
+        <div class="mb-3">
+          <label class="form-label">Choose a Username</label>
+          <input
+            type="text"
+            name="username"
+            class="form-control"
+            placeholder="e.g. yarn_lover_92"
+            value="{{ request.user.username }}"
+            required
+          >
+          {% if form.username.errors %}
+          <div class="text-danger small mt-1">{{ form.username.errors }}</div>
+          {% endif %}
+        </div>
+
+        <!-- Bio (optional) -->
+        <div class="mb-3">
+          <label class="form-label">Bio <span style="color:#ccc;font-weight:400">(optional)</span></label>
+          <textarea
+            name="bio"
+            class="form-control"
+            rows="3"
+            placeholder="Tell the community a little about yourself..."
+          ></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-save">Save & Continue 🧶</button>
+      </form>
+
+      <a href="{% url 'home' %}" class="skip-link">Skip for now</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Live avatar preview
+  document.getElementById('id_avatar').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        const img = document.getElementById('avatarImg');
+        const preview = document.getElementById('avatarPreview');
+        img.src = ev.target.result;
+        img.style.display = 'block';
+        preview.style.fontSize = '0';
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+</script>
+{% endblock %}

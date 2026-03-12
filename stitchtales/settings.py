@@ -40,11 +40,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     
     'blog',
     'rest_framework',
     'rest_framework.authtoken',
     'django.contrib.sitemaps',
+
+    'allauth',                                    # ← ADD
+    'allauth.account',                            # ← ADD
+    'allauth.socialaccount',                      # ← ADD
+    'allauth.socialaccount.providers.google',  
 
    
     
@@ -55,6 +61,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',  # For serving static files in production
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'allauth.account.middleware.AccountMiddleware',  # ← ADD
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -196,6 +203,25 @@ if USE_SUPABASE:
     DEFAULT_FILE_STORAGE = 'blog.storage_backends.SupabaseStorage'
 
 
+SOCIALACCOUNT_LOGIN_ON_GET = True
+LOGIN_REDIRECT_URL = '/complete-profile/'
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': config('GOOGLE_CLIENT_ID'),
+            'secret': config('GOOGLE_CLIENT_SECRET'),
+        },
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+        'FETCH_USERINFO': True,
+    }
+}
+
+# This is the key fix — tells allauth not to look in the DB for the app
+SOCIALACCOUNT_STORE_TOKENS = False
+
+SITE_ID = 1
 
 LOGGING = {
     'version': 1,

@@ -69,7 +69,33 @@ def profile_view(request):
         'user_form': user_form,
         'profile_form': profile_form
     })
+@login_required
+def complete_profile(request):
+    profile, _ = UserProfile.objects.get_or_create(user=request.user)
 
+    if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        bio = request.POST.get('bio', '').strip()
+        avatar = request.FILES.get('avatar')
+
+        if username and username != request.user.username:
+            if User.objects.filter(username=username).exclude(pk=request.user.pk).exists():
+                messages.error(request, 'That username is already taken. Please choose another.')
+                return render(request, 'auth/complete_profile.html')
+            request.user.username = username
+            request.user.save()
+
+        if bio:
+            profile.bio = bio
+        if avatar:
+            profile.avatar = avatar
+        profile.save()
+
+        request.session.pop('needs_profile_completion', None)
+        messages.success(request, f'Welcome to StitchTales, {request.user.username}! 🧶')
+        return redirect('home')
+
+    return render(request, 'auth/complete_profile.html')
 
 def author_detail(request, username):
     author = get_object_or_404(User, username=username)

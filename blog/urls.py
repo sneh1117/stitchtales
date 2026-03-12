@@ -7,6 +7,7 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('profile/', views.profile_view, name='profile'),
+    path('complete-profile/', views.complete_profile, name='complete_profile'),
     path('author/<str:username>/', views.author_detail, name='author_detail'),
 
     # Blog

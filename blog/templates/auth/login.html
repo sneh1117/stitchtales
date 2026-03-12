@@ -1,24 +1,153 @@
 {% extends 'base.html' %}
 {% block title %}Login — StitchTales{% endblock %}
+
+{% block extra_head %}
+<style>
+  .auth-card {
+    max-width: 440px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 8px 40px rgba(155, 126, 200, 0.15);
+  }
+  .auth-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--yarn-brown);
+    text-align: center;
+    margin-bottom: 0.25rem;
+  }
+  .auth-subtitle {
+    text-align: center;
+    color: #aaa;
+    font-size: 0.9rem;
+    margin-bottom: 1.75rem;
+  }
+  .google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 12px;
+    background: white;
+    color: #3c3c3c;
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: 'Georgia', serif;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .google-btn:hover {
+    border-color: var(--yarn-purple);
+    box-shadow: 0 4px 16px rgba(155, 126, 200, 0.2);
+    color: var(--yarn-purple);
+    transform: translateY(-1px);
+  }
+  .google-btn img {
+    width: 20px;
+    height: 20px;
+  }
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 1.25rem 0;
+    color: #ccc;
+    font-size: 0.8rem;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #eee;
+  }
+  .form-control {
+    border-radius: 10px;
+    border: 1.5px solid #eee;
+    padding: 0.65rem 1rem;
+    font-family: 'Georgia', serif;
+    transition: border-color 0.2s;
+  }
+  .form-control:focus {
+    border-color: var(--yarn-purple);
+    box-shadow: 0 0 0 3px rgba(155, 126, 200, 0.1);
+  }
+  .form-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #666;
+    margin-bottom: 0.35rem;
+  }
+  .btn-signin {
+    background: linear-gradient(135deg, var(--yarn-purple), var(--yarn-pink));
+    border: none;
+    border-radius: 12px;
+    padding: 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: 'Georgia', serif;
+    color: white;
+    width: 100%;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .btn-signin:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    color: white;
+  }
+  .auth-footer {
+    text-align: center;
+    margin-top: 1.25rem;
+    font-size: 0.875rem;
+    color: #999;
+  }
+  .auth-footer a {
+    color: var(--yarn-purple);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .auth-footer a:hover { text-decoration: underline; }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-5">
-        <div class="card p-4">
-            <h3 class="text-center mb-4" style="color: var(--yarn-brown);">🧶 Welcome Back</h3>
-            <form method="POST">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label class="form-label">Username</label>
-                    <input type="text" name="username" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Password</label>
-                    <input type="password" name="password" class="form-control" required>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Login</button>
-            </form>
-            <p class="text-center mt-3">Don't have an account? <a href="{% url 'register' %}">Register</a></p>
+{% load socialaccount %}
+<div class="row justify-content-center py-4">
+  <div class="col-12">
+    <div class="auth-card">
+
+      <h2 class="auth-title">🧶 Welcome Back</h2>
+      <p class="auth-subtitle">Sign in to continue to StitchTales</p>
+
+      <!-- Google Button -->
+      <a href="{% provider_login_url 'google' %}" class="google-btn">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+        Continue with Google
+      </a>
+
+      <div class="divider">or sign in with email</div>
+
+      <!-- Email/Password Form -->
+      <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label">Username</label>
+          <input type="text" name="username" class="form-control" placeholder="Your username" required>
         </div>
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn btn-signin mt-1">Sign In</button>
+      </form>
+
+      <p class="auth-footer">Don't have an account? <a href="{% url 'register' %}">Create one</a></p>
     </div>
+  </div>
 </div>
 {% endblock %}
