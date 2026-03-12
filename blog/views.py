@@ -214,34 +214,18 @@ def dashboard(request):
     # Top performing posts
     top_posts = posts.filter(status='published').order_by('-view_count')[:5]
 
-    
-    today=now().date()
-    total_visitors=Visitor.objects.count()
-    unique_visitors=Visitor.objects.values('ip_address').distinct().count()
-    visitors_today=Visitor.objects.filter(visited_at__date=today).count()
+    # Visitor analytics — SUPERUSER ONLY
+    total_visitors = unique_visitors = visitors_today = 0
+    top_countries = top_referrers = top_pages = []
 
-    top_countries=(
-        Visitor.objects
-        .exclude(country='')
-        .values('country')
-        .annotate(total=Count('id'))
-        .order_by('-total')[:5]
-    )
-
-    top_referrers= (
-        Visitor.objects
-        .exclude(referrer='')
-        .values('referrer')
-        .annotate(total=Count('id'))
-        .order_by('-total')[:5]
-    )
-
-    top_pages=(
-        Visitor.objects
-        .values('path')
-        .annotate(total=Count('id'))
-        .order_by('-total')[:5]
-    )
+    if request.user.is_superuser:
+        today = now().date()
+        total_visitors = Visitor.objects.count()
+        unique_visitors = Visitor.objects.values('ip_address').distinct().count()
+        visitors_today = Visitor.objects.filter(visited_at__date=today).count()
+        top_countries = Visitor.objects.exclude(country='').values('country').annotate(total=Count('id')).order_by('-total')[:5]
+        top_referrers = Visitor.objects.exclude(referrer='').values('referrer').annotate(total=Count('id')).order_by('-total')[:5]
+        top_pages = Visitor.objects.values('path').annotate(total=Count('id')).order_by('-total')[:5]
     
     return render(request, 'blog/dashboard.html', {
         'posts': posts.order_by('-created_at'),
@@ -253,14 +237,14 @@ def dashboard(request):
         'total_likes': total_likes,
         'recent_comments': recent_comments,
         'top_posts': top_posts,
-        'total_visitors':total_visitors,
-        'unique_visitors':unique_visitors,
-        'visitors_today':visitors_today,
-        'top_countries':top_countries,
-        'top_referrers':top_referrers,
-        'top_pages':top_pages,
+        'is_superuser': request.user.is_superuser,
+        'total_visitors': total_visitors,
+        'unique_visitors': unique_visitors,
+        'visitors_today': visitors_today,
+        'top_countries': top_countries,
+        'top_referrers': top_referrers,
+        'top_pages': top_pages,
     })
-
 
 @login_required
 def post_create(request):
