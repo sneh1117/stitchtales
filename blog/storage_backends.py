@@ -51,3 +51,6 @@ class SupabaseStorage(Storage):
     
     def size(self, name):
         return 0  # ✅ Required by Django Storage interface
+    
+    def deconstruct(self):
+        return ('blog.storage_backends.SupabaseStorage', [], {})
