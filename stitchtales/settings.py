@@ -223,6 +223,21 @@ SOCIALACCOUNT_STORE_TOKENS = False
 
 SITE_ID = 1
 
+# Override site domain dynamically
+import django.contrib.sites.models as sites_models
+
+_original_get = sites_models.SiteManager.get_current
+
+def _patched_get_current(self, request=None):
+    site = self.get(id=1)
+    if config('DEBUG', default=False, cast=bool):
+        site.domain = '127.0.0.1:8000'
+    else:
+        site.domain = 'stitchtales.up.railway.app'
+    return site
+
+sites_models.SiteManager.get_current = _patched_get_current
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
