@@ -3,7 +3,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
-from .models import Post, Category, Tag, Comment, Like, UserProfile,Visitor
+from .models import Post, Category, Tag, Comment, Like, UserProfile,Visitor, PostImage
 from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm, PostForm, CommentForm
 from django.http import HttpResponse
 from django.views.decorators.http import require_GET
@@ -255,6 +255,17 @@ def post_create(request):
             post.author = request.user
             post.save()
             form.save_m2m()
+            
+            # Handle multiple image uploads
+            cover_images = request.FILES.getlist('cover_images')
+            for order, image in enumerate(cover_images[:3]):  # Max 3 images
+                if image:
+                    PostImage.objects.create(
+                        post=post,
+                        image=image,
+                        order=order
+                    )
+            
             messages.success(request, 'Post created successfully!')
             return redirect('post_detail', slug=post.slug)
     else:
@@ -268,7 +279,22 @@ def post_edit(request, slug):
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES, instance=post)
         if form.is_valid():
-            form.save()
+            post = form.save(commit=False)
+            post.save()
+            form.save_m2m()
+            
+            # Handle multiple image uploads
+            cover_images = request.FILES.getlist('cover_images')
+            if cover_images:  # Only if new images were uploaded
+                post.images.all().delete()  # Delete old images
+                for order, image in enumerate(cover_images[:3]):  # Max 3 images
+                    if image:
+                        PostImage.objects.create(
+                            post=post,
+                            image=image,
+                            order=order
+                        )
+            
             messages.success(request, 'Post updated successfully!')
             return redirect('post_detail', slug=post.slug)
     else:
@@ -307,13 +333,3 @@ def handler404(request,exception):
 
 def handler500(request):
     return render(request,"500.html",status=500)
-
-
-
-
-
-
-
-
-
-

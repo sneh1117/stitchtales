@@ -3,7 +3,7 @@
 {% block content %}
 <div class="card p-4">
     <h3 style="color: var(--yarn-brown);">✍️ {{ action }} Post</h3>
-    <form method="POST" enctype="multipart/form-data">
+    <form method="POST" enctype="multipart/form-data" id="postForm">
         {% csrf_token %}
         {% for field in form %}
         <div class="mb-3">
@@ -13,8 +13,29 @@
             {% if field.help_text %}<div class="text-muted small">{{ field.help_text }}</div>{% endif %}
         </div>
         {% endfor %}
+        
         <button type="submit" class="btn btn-primary">{{ action }} Post</button>
         <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary ms-2">Cancel</a>
     </form>
 </div>
+
+<script>
+  // Prevent selecting more than 3 files
+  document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.querySelector('input[name="cover_images"]');
+    
+    if (fileInput) {
+      fileInput.addEventListener('change', function(e) {
+        const files = e.target.files;
+        
+        if (files.length > 3) {
+          alert('⚠️ You can only upload a maximum of 3 images. You selected ' + files.length + '. Please select 3 or fewer.');
+          // Clear the input
+          e.target.value = '';
+        }
+      });
+    }
+  });
+</script>
+
 {% endblock %}

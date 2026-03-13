@@ -1,6 +1,42 @@
 {% extends 'base.html' %}
 {% block title %}StitchTales — Crochet Stories & Patterns{% endblock %}
 
+{% block extra_head %}
+<!-- Bootstrap for carousel -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+  .carousel-container {
+    position: relative;
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+  }
+
+  .carousel-inner img {
+    height: 300px;
+    object-fit: cover;
+  }
+
+  .carousel-control-prev,
+  .carousel-control-next {
+    filter: invert(1);
+  }
+
+  .post-cover {
+    height: 300px;
+    object-fit: cover;
+  }
+
+  .placeholder-image {
+    height: 300px;
+    background: #f8f8f8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="row">
     <!-- Posts -->
@@ -8,9 +44,52 @@
         <h2 class="mb-4" style="color: var(--yarn-brown);">Latest Stories 🧶</h2>
         {% for post in posts %}
         <div class="card mb-4">
-            {% if post.cover_image %}
-            <img src="{{ post.cover_image.url }}" class="post-cover" alt="{{ post.title }}">
+            
+            <!-- CAROUSEL FOR MULTIPLE IMAGES OR SINGLE IMAGE OR PLACEHOLDER OR OLD COVER_IMAGE -->
+            {% if post.images.all|length > 1 %}
+            <!-- MULTIPLE IMAGES - SHOW CAROUSEL -->
+            <div class="carousel-container">
+              <div id="carousel-{{ post.id }}" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                  {% for post_image in post.images.all %}
+                  <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <a href="{% url 'post_detail' post.slug %}">
+                      <img src="{{ post_image.image.url }}" alt="{{ post.title }}" class="d-block w-100">
+                    </a>
+                  </div>
+                  {% endfor %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carousel-{{ post.id }}" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carousel-{{ post.id }}" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+                </button>
+              </div>
+            </div>
+
+            {% elif post.images.all|length == 1 %}
+            <!-- SINGLE IMAGE - SHOW STATIC IMAGE -->
+            <a href="{% url 'post_detail' post.slug %}">
+              <img src="{{ post.images.first.image.url }}" class="post-cover" alt="{{ post.title }}">
+            </a>
+
+            {% elif post.cover_image %}
+            <!-- OLD COVER_IMAGE (FALLBACK FOR PREVIOUSLY UPLOADED POSTS) -->
+            <a href="{% url 'post_detail' post.slug %}">
+              <img src="{{ post.cover_image.url }}" class="post-cover" alt="{{ post.title }}">
+            </a>
+
+            {% else %}
+            <!-- NO IMAGES - SHOW PLACEHOLDER -->
+            <a href="{% url 'post_detail' post.slug %}" class="placeholder-image d-flex align-items-center justify-content-center text-decoration-none">
+              <i class="bi bi-image" style="font-size: 4rem; color: #ccc;"></i>
+            </a>
+
             {% endif %}
+
             <div class="card-body p-4">
                 <div class="d-flex align-items-center mb-2 gap-2">
                     {% if post.category %}
@@ -87,4 +166,7 @@
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
 {% endblock %}

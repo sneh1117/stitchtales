@@ -106,7 +106,21 @@ class Post(models.Model):
         return reverse("post_detail", kwargs={"slug": self.slug})
     
 
-
+class PostImage(models.Model):
+    """Store up to 3 additional images per post"""
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="images")
+    image = models.ImageField(
+        upload_to='post-images/',
+        storage=supabase_storage,
+    )
+    order = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+ 
+    class Meta:
+        ordering = ['order']
+ 
+    def __str__(self):
+        return f"Image {self.order} for {self.post.title}"
 
 class UserProfile(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE,related_name="profile")
@@ -173,3 +187,4 @@ class Visitor(models.Model):
     def __str__(self):
         return f"{self.ip_address} → {self.path} at {self.visited_at:%Y-%m-%d %H:%M}"
  
+

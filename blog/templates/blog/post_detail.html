@@ -27,6 +27,81 @@
 
 <!--Canonical URL-->
 <link rel="canonical" href="{{request.build_absolute_uri}}">
+
+<!-- GLightbox for image lightbox -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/glightbox.min.css">
+<!-- Bootstrap for carousel -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+  .post-image-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+  
+  .post-image-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #f8f8f8;
+    aspect-ratio: 1;
+  }
+  
+  .post-image-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  
+  .post-image-item:hover img {
+    transform: scale(1.05);
+  }
+  
+  .carousel-container {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+  
+  .carousel {
+    width: 100%;
+  }
+  
+  .carousel-inner img {
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  
+  .carousel-inner img:hover {
+    transform: scale(1.02);
+  }
+  
+  .carousel-control-prev,
+  .carousel-control-next {
+    filter: invert(1);
+  }
+  
+  /* Lightbox close button styling */
+  .glightbox .gclose {
+    width: 50px;
+    height: 50px;
+    top: 20px;
+    right: 20px;
+    font-size: 32px;
+    line-height: 50px;
+    color: white;
+    text-shadow: 0 0 10px rgba(0,0,0,0.5);
+  }
+  
+  .glightbox .gclose:hover {
+    color: #ccc;
+  }
+</style>
 {% endblock %}
 
 
@@ -34,9 +109,39 @@
 <div class="row">
     <div class="col-lg-8">
         <article class="card p-4 mb-4">
-            {% if post.cover_image %}
-            <img src="{{ post.cover_image.url }}" class="post-cover mb-4" alt="{{ post.title }}">
+            
+            <!-- CAROUSEL FOR MULTIPLE IMAGES OR SINGLE IMAGE -->
+            {% if post.images.all|length > 1 %}
+            <!-- MULTIPLE IMAGES - SHOW CAROUSEL -->
+            <div class="carousel-container">
+              <div id="imageCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                  {% for post_image in post.images.all %}
+                  <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <a href="{{ post_image.image.url }}" class="glightbox" data-gallery="post-images">
+                      <img src="{{ post_image.image.url }}" alt="{{ post.title }}" class="d-block w-100" style="height: 400px; object-fit: cover;">
+                    </a>
+                  </div>
+                  {% endfor %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#imageCarousel" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+                </button>
+              </div>
+            </div>
+            
+            {% elif post.images.all|length == 1 %}
+            <!-- SINGLE IMAGE - SHOW STATIC IMAGE -->
+            <a href="{{ post.images.first.image.url }}" class="glightbox" data-gallery="post-images">
+              <img src="{{ post.images.first.image.url }}" class="post-cover mb-4" alt="{{ post.title }}" style="width: 100%; height: auto; border-radius: 8px; cursor: pointer;">
+            </a>
             {% endif %}
+            
             <div class="d-flex gap-2 mb-3 flex-wrap align-items-center">
     {% if post.category %}
     <a href="{{ post.category.get_absolute_url }}" class="badge-category text-decoration-none">{{ post.category.name }}</a>
@@ -62,6 +167,7 @@
                 <small class="text-muted">by <a href="{% url 'author_detail' post.author.username %}">{{ post.author.get_full_name|default:post.author.username }}</a> · {{ post.created_at|date:"M d, Y" }}</small>
             </div>
             <div class="post-content" style="line-height: 1.9;">{{ post.content|linebreaks }}</div>
+
             <div class="mt-4 d-flex flex-wrap gap-2">
                 {% for tag in post.tags.all %}
                 <a href="{{ tag.get_absolute_url }}" class="badge-tag text-decoration-none">{{ tag.name }}</a>
@@ -175,8 +281,16 @@
 </div>
 {% endif %}
 
-
-
-
+<!-- GLightbox JavaScript with custom close button -->
+<script src="https://cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/glightbox.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const lightbox = GLightbox({
+    selector: '.glightbox',
+    touchNavigation: true,
+    loop: true,
+    closeButton: true,  // Show close button
+  });
+</script>
 
 {% endblock %}
