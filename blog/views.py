@@ -123,9 +123,10 @@ def post_detail(request, slug):
     post = get_object_or_404(Post, slug=slug, status='published')
     is_liked = False
 
-    post.view_count += 1
-    post.save(update_fields=['view_count'])
-
+    if not request.user.is_authenticated or request.user != post.author:
+        post.view_count += 1
+        post.save(update_fields=['view_count'])
+        
     if request.user.is_authenticated:
         is_liked = Like.objects.filter(post=post, user=request.user).exists()
 
