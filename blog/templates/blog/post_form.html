@@ -25,6 +25,15 @@
     color: #aaa;
     font-style: italic;
   }
+
+  /* Tag pill hover effect */
+  .tag-pill:has(input:checked) {
+    background: var(--yarn-purple) !important;
+    border-color: var(--yarn-purple) !important;
+  }
+  .tag-pill:has(input:checked) label {
+    color: white !important;
+  }
 </style>
 {% endblock %}
 
@@ -47,9 +56,14 @@
         {% elif field.name == 'tags' %}
           <div class="d-flex flex-wrap gap-2 mt-1">
             {% for checkbox in field %}
-            <div class="form-check form-check-inline border rounded-pill px-3 py-1"
+            <div class="tag-pill border rounded-pill px-3 py-1"
                  style="background: #f5f0ff; border-color: var(--yarn-purple) !important; cursor: pointer;">
-              {{ checkbox.tag }}
+              <input type="checkbox"
+                     name="{{ field.html_name }}"
+                     value="{{ checkbox.data.value }}"
+                     id="{{ checkbox.id_for_label }}"
+                     class="form-check-input"
+                     {% if checkbox.data.selected %}checked{% endif %}>
               <label class="form-check-label ms-1" for="{{ checkbox.id_for_label }}"
                      style="cursor: pointer; color: var(--yarn-brown);">
                 {{ checkbox.choice_label }}
