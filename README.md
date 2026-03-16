@@ -47,13 +47,17 @@ These are the more interesting engineering decisions made during development:
 
 - **View Count Integrity** — post view counts only increment for visitors who are not the post author, preventing authors from inflating their own stats.
 
-- **HTMX Like Button** — the like/unlike interaction uses HTMX for a seamless in-place UI update with no full page reload, and no JavaScript framework required.
+- **HTMX Like & Bookmark Buttons** — both the like and bookmark interactions use HTMX for seamless in-place UI updates with no full page reload and no JavaScript framework required.
+
+- **Bookmark System** — users can save posts to a personal reading list. Built with a `Bookmark` model using a `unique_together` constraint to prevent duplicates, and rendered via HTMX partial swaps.
 
 - **SEO Infrastructure** — every post has meta description, keywords, Open Graph tags, and Twitter Card tags. A dynamic XML sitemap (`/sitemap.xml`) and `robots.txt` are served automatically.
 
-- **Rich Text with Quill** — the post editor uses Quill.js (CDN, no backend dependency) with the content stored as HTML and rendered safely in templates.
+- **Rich Text with Quill** — the post editor uses Quill.js (CDN, no backend dependency) with content stored as HTML and rendered safely in templates.
 
 - **Paginated Search with Filters** — search results can be filtered by category, tag, and sorted by newest, oldest, most viewed, or most liked — all in a single query using Django ORM with `.distinct()` to prevent duplicates from M2M joins.
+
+- **Multiple Tag Selection** — tags use explicitly typed `<input type="checkbox">` elements to avoid Bootstrap's form-control class overriding checkbox behaviour and causing radio-button-style single selection.
 
 ---
 
@@ -80,6 +84,11 @@ These are the more interesting engineering decisions made during development:
 - Sort by newest, oldest, most viewed, or most liked
 - Pagination across all listing pages (home, search, category, tag)
 
+### Engagement
+- HTMX-powered like button (no page reload)
+- Bookmark / save posts to a personal reading list
+- Comment system with moderation (approve before display)
+
 ### Visitor Analytics (Superuser)
 - Total visits, unique visitors, and visits today
 - Top pages by traffic
@@ -94,8 +103,6 @@ These are the more interesting engineering decisions made during development:
 - Read-only for unauthenticated users, full CRUD for authenticated authors
 
 ### Additional
-- HTMX-powered like button (no page reload)
-- Comment system with moderation (approve before display)
 - XML sitemap and `robots.txt`
 - Open Graph and Twitter Card meta tags per post
 - Custom 404 and 500 error pages
@@ -123,11 +130,14 @@ These are the more interesting engineering decisions made during development:
 ### Why Supabase instead of S3?
 S3 requires AWS account setup, IAM roles, and bucket policies. Supabase Storage offers a simpler REST API with a generous free tier, making it a better fit for an indie project. A custom Django `Storage` subclass keeps the integration clean — the rest of the app doesn't know or care where files go.
 
-### Why HTMX instead of React for likes?
-The like button is the only truly interactive element. Adding a full JS framework for one button would be over-engineering. HTMX handles the partial HTML swap in ~5 lines of template markup, keeping the stack simple and the page fast.
+### Why HTMX instead of React for likes and bookmarks?
+Likes and bookmarks are the only truly interactive elements. Adding a full JS framework for two buttons would be over-engineering. HTMX handles each partial HTML swap in ~5 lines of template markup, keeping the stack simple and the page fast.
 
 ### Why build analytics instead of using Google Analytics?
 GA adds cookie consent requirements, GDPR complexity, and sends user data to a third party. A simple `Visitor` model in Postgres gives the same core insights (page views, referrers, geography) with full data ownership and no compliance overhead.
+
+### Why Quill over TinyMCE?
+TinyMCE requires an API key and account registration even for basic use. Quill is fully open source, CDN-hosted, and requires zero configuration — content is stored as HTML and rendered with Django's `|safe` filter.
 
 ---
 
@@ -136,7 +146,7 @@ GA adds cookie consent requirements, GDPR complexity, and sends user data to a t
 ```
 stitchtales/
 ├── blog/
-│   ├── models.py               # Post, Category, Tag, Comment, Like, UserProfile, Visitor
+│   ├── models.py               # Post, Category, Tag, Comment, Like, Bookmark, UserProfile, Visitor
 │   ├── views.py                # All view logic including analytics aggregation
 │   ├── forms.py                # RegisterForm, PostForm, ProfileForm, CommentForm
 │   ├── storage_backends.py     # Custom Supabase Storage backend
@@ -144,9 +154,9 @@ stitchtales/
 │   ├── urls.py
 │   ├── serializers.py          # DRF serializers
 │   └── templates/
-│       ├── blog/               # home, post_detail, dashboard, search, etc.
+│       ├── blog/               # home, post_detail, dashboard, search, bookmarks, etc.
 │       ├── auth/               # login, register, profile, author_detail
-│       └── partials/           # like_button, pagination
+│       └── partials/           # like_button, bookmark_button, pagination
 ├── stitchtales/
 │   ├── settings.py
 │   ├── urls.py
@@ -284,10 +294,14 @@ CSRF_TRUSTED_ORIGINS=https://yourapp.up.railway.app
 - [x] Pagination across all listing pages
 - [x] Multiple cover images per post with carousel
 - [x] Visitor analytics dashboard
+- [x] Bookmark / save posts to reading list
+- [x] HTMX like and bookmark buttons (no page reload)
+- [x] Multiple tag selection on post create/edit
+- [x] View count integrity (excludes author's own views)
+- [ ] Comment approval flow (admin + author controls)
+- [ ] Share buttons (WhatsApp, copy link)
 - [ ] Email notifications for comments
 - [ ] Comment threading (nested replies)
-- [ ] Bookmarks / saved posts
-- [ ] Share buttons (WhatsApp, copy link)
 - [ ] Newsletter subscription
 - [ ] Pattern file uploads (PDF support)
 - [ ] Social login (Google, GitHub)
