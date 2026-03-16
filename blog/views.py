@@ -147,7 +147,7 @@ def post_detail(request, slug):
     else:
         comment_form = CommentForm()
 
-    comments = post.comments.filter(is_approved=True)
+    comments = post.comments.all()
     related_posts = Post.objects.filter(
         category=post.category, status='published'
     ).exclude(id=post.id)[:3]
