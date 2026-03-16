@@ -56,7 +56,7 @@ class VisitorTrackingMiddleware:
         if ip in EXCLUDED_IPS:
             return response
         
-        if request.user.is_authenticated and request.user.is_staff:
+        if request.user.is_authenticated and (request.user.is_staff or  request.user.is_superuser):
             return response
         
 

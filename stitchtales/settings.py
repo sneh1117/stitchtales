@@ -59,15 +59,15 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # For serving static files in production
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'blog.middleware.VisitorTrackingMiddleware',
-    'allauth.account.middleware.AccountMiddleware',  # ← ADD
+    'allauth.account.middleware.AccountMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'blog.middleware.VisitorTrackingMiddleware',  # ← moved to last
 ]
 
 ROOT_URLCONF = 'stitchtales.urls'
@@ -250,4 +250,4 @@ LOGGING = {
     },
 }
 
-ANALYTICS_EXCLUDED_IPS=['110.226.176.83']
+ANALYTICS_EXCLUDED_IPS=['110.226.183.226']
