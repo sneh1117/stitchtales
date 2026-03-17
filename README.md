@@ -33,13 +33,15 @@ A full-featured blogging platform built for the crochet and knitting community. 
 
 StitchTales is a Django-based blog platform designed around community-driven content. Authors can register, manage profiles, write and publish posts with cover images, and interact through comments and likes. The platform is deployed on Railway with media files stored on Supabase Storage.
 
-This project was built end-to-end as a solo project — from database schema design to production deployment — covering the full Django web development stack including custom storage backends, REST API design, SEO optimisation, and visitor analytics.
+This project was built end-to-end as a solo project — from database schema design to production deployment — covering the full Django web development stack including custom storage backends, REST API design, SEO optimisation, visitor analytics, and a soft paywall system to drive user registrations.
 
 ---
 
 ## Key Technical Highlights
 
 These are the more interesting engineering decisions made during development:
+
+- **Soft Paywall with 3-Second Preview** — implemented a CSS blur-based paywall that shows non-authenticated users the full post for 3 seconds, then blurs content and displays a modal prompting sign-up. Uses vanilla JavaScript and CSS3 (no dependencies). Only shows for non-authenticated users; logged-in users and post authors see full content immediately.
 
 - **Custom Supabase Storage Backend** — wrote a custom Django `Storage` class to integrate Supabase as a media file host, replacing the need for AWS S3 or Cloudinary. Handles file upload, URL generation, and deletion through the Supabase REST API.
 
@@ -89,6 +91,17 @@ These are the more interesting engineering decisions made during development:
 - Bookmark / save posts to a personal reading list
 - Comment system with moderation (approve before display)
 
+### Soft Paywall (Content Preview)
+- **3-Second Preview Paywall** — non-authenticated users can read posts for 3 seconds
+- Content automatically blurs after timer expires (CSS `filter: blur(8px)`)
+- Modal prompts users to sign up or log in to continue reading
+- Modal has no close button or dismiss options — users must choose to register or log in
+- Logged-in users see full content immediately (no paywall)
+- Post authors always see their own posts unblocked
+- SEO-friendly: search engines see full content (blur is UI-only)
+- Customizable: blur duration, intensity, and modal text can be adjusted
+- Zero dependencies: uses vanilla JavaScript + CSS3
+
 ### Visitor Analytics (Superuser)
 - Total visits, unique visitors, and visits today
 - Top pages by traffic
@@ -118,7 +131,7 @@ These are the more interesting engineering decisions made during development:
 | Database | PostgreSQL (Railway) / SQLite (local) |
 | Media Storage | Supabase Storage (custom backend) |
 | Static Files | Whitenoise |
-| Frontend | Django Templates, HTMX, Quill.js |
+| Frontend | Django Templates, HTMX, Quill.js, Vanilla JS, CSS3 |
 | Deployment | Railway |
 | Auth | Django built-in auth + DRF Token Auth |
 | CI | GitHub Actions |
@@ -139,6 +152,9 @@ GA adds cookie consent requirements, GDPR complexity, and sends user data to a t
 ### Why Quill over TinyMCE?
 TinyMCE requires an API key and account registration even for basic use. Quill is fully open source, CDN-hosted, and requires zero configuration — content is stored as HTML and rendered with Django's `|safe` filter.
 
+### Why vanilla JavaScript for the paywall instead of a library?
+A CSS blur effect with vanilla JS requires no dependencies, loads instantly, and keeps the bundle size minimal. The paywall logic is simple enough (~50 lines) that a framework would add unnecessary complexity. React, Vue, or Alpine would be overkill for a timer + modal.
+
 ---
 
 ## Project Structure
@@ -156,7 +172,7 @@ stitchtales/
 │   └── templates/
 │       ├── blog/               # home, post_detail, dashboard, search, bookmarks, etc.
 │       ├── auth/               # login, register, profile, author_detail
-│       └── partials/           # like_button, bookmark_button, pagination
+│       └── partials/           # like_button, bookmark_button, pagination, preview_overlay
 ├── stitchtales/
 │   ├── settings.py
 │   ├── urls.py
@@ -298,13 +314,33 @@ CSRF_TRUSTED_ORIGINS=https://yourapp.up.railway.app
 - [x] HTMX like and bookmark buttons (no page reload)
 - [x] Multiple tag selection on post create/edit
 - [x] View count integrity (excludes author's own views)
-- [ ] Comment approval flow (admin + author controls)
-- [ ] Share buttons (WhatsApp, copy link)
+- [x] 3-second preview paywall with signup modal (NEW!)
+- [x] Share buttons (WhatsApp, copy link)
+- [x] Social login (Google) 
 - [ ] Email notifications for comments
 - [ ] Comment threading (nested replies)
 - [ ] Newsletter subscription
 - [ ] Pattern file uploads (PDF support)
-- [ ] Social login (Google, GitHub)
+
+
+---
+
+## Recent Updates
+
+### v1.1.0 — Soft Paywall & User Acquisition
+- ✨ **3-Second Preview Paywall**: Non-authenticated users can preview posts for 3 seconds before content blurs
+- 🔒 **Forced Sign-up Modal**: No-dismiss modal prompts users to register or log in
+- 📊 **Conversion Optimization**: Designed to increase user registrations without blocking SEO
+- 🎨 **Responsive Design**: Works seamlessly on mobile and desktop
+- ⚡ **Zero Dependencies**: Vanilla JavaScript + CSS3 (no frameworks needed)
+
+### v1.0.0 — Initial Launch
+- Full blog platform with CRUD operations
+- Multiple image uploads per post
+- Rich text editor with Quill.js
+- Visitor analytics system
+- HTMX-powered interactions
+- REST API with authentication
 
 ---
 
